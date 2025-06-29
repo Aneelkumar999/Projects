@@ -9,7 +9,7 @@
 
 ## 🚀 Features
 
-- 📄 Upload resume and job description
+- 📄 Upload resume and job description in txt format
 - 🤖 Uses LLMs to intelligently parse and compare
 - 📊 Ranks resumes based on job matching
 - ⚙️ ATS-style functionality simulation
