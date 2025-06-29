@@ -27,7 +27,8 @@
 ---
 
 ## 📁 Project Structure
-
+```bash
+.
 ├── src/                     # Source code
 ├── index.html               # Entry HTML
 ├── package.json             # Project dependencies
