@@ -46,4 +46,4 @@ export interface MatchResult {
   dateCreated: Date;
 }
 
-export type TabType = 'upload' | 'match' | 'results' | 'history';
+export type TabType = 'upload' | 'match' | 'results' | 'history' | 'data';

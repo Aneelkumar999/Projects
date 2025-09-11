@@ -33,6 +33,8 @@ const MainContent: React.FC = () => {
         return <MatchResults />;
       case 'history':
         return <MatchHistory />;
+      case 'data':
+        return <DataViewer />;
       default:
         return <ResumeUpload />;
     }

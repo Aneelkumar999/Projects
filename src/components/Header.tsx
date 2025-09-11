@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Briefcase, BarChart2, History, Menu, X, User, LogOut } from 'lucide-react';
+import { FileText, Briefcase, BarChart2, History, Menu, X, User, LogOut, Database } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { TabType } from '../types';
 import AuthModal from './AuthModal';
