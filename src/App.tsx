@@ -5,11 +5,22 @@ import ResumeUpload from './components/ResumeUpload';
 import JobDescriptions from './components/JobDescriptions';
 import MatchResults from './components/MatchResults';
 import MatchHistory from './components/MatchHistory';
-import { FileText } from 'lucide-react';
+import { FileText, Loader2 } from 'lucide-react';
 
 // Main content wrapper that uses the context
 const MainContent: React.FC = () => {
-  const { activeTab } = useAppContext();
+  const { activeTab, loading, user } = useAppContext();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // Render the appropriate component based on the active tab
   const renderContent = () => {
@@ -30,9 +41,21 @@ const MainContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
+      
+      {!user && (
+        <div className="bg-blue-50 border-b border-blue-200 py-3">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p className="text-blue-800 text-sm text-center">
+              Sign in to save your resumes, job descriptions, and match history to the cloud.
+            </p>
+          </div>
+        </div>
+      )}
+      
       <main className="py-6">
         {renderContent()}
       </main>
+      
       <footer className="bg-white border-t border-gray-200 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">

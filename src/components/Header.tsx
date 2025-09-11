@@ -1,10 +1,18 @@
 import React from 'react';
-import { FileText, Briefcase, BarChart2, History, Menu, X } from 'lucide-react';
+import { FileText, Briefcase, BarChart2, History, Menu, X, User, LogOut } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { TabType } from '../types';
+import AuthModal from './AuthModal';
 
 const Header: React.FC = () => {
-  const { activeTab, setActiveTab } = useAppContext();
+  const { 
+    activeTab, 
+    setActiveTab, 
+    user, 
+    showAuthModal, 
+    setShowAuthModal, 
+    signOut 
+  } = useAppContext();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   const toggleMobileMenu = () => {
@@ -24,6 +32,7 @@ const Header: React.FC = () => {
   ] as const;
 
   return (
+    <>
     <header className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -35,22 +44,47 @@ const Header: React.FC = () => {
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
-            {tabs.map((tab) => (
+          <div className="hidden md:flex items-center space-x-4">
+            <nav className="flex space-x-8">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
+                    activeTab === tab.id
+                      ? 'text-white bg-blue-700 shadow-lg transform scale-105'
+                      : 'text-blue-100 hover:text-white hover:bg-blue-500'
+                  }`}
+                >
+                  {tab.icon}
+                  <span className="ml-2">{tab.label}</span>
+                </button>
+              ))}
+            </nav>
+            
+            {/* Auth Section */}
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <div className="text-blue-100 text-sm">
+                  {user.email}
+                </div>
+                <button
+                  onClick={signOut}
+                  className="flex items-center px-3 py-2 text-blue-100 hover:text-white hover:bg-blue-500 rounded-md transition-colors duration-200"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            ) : (
               <button
-                key={tab.id}
-                onClick={() => handleTabChange(tab.id)}
-                className={`flex items-center px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
-                  activeTab === tab.id
-                    ? 'text-white bg-blue-700 shadow-lg transform scale-105'
-                    : 'text-blue-100 hover:text-white hover:bg-blue-500'
-                }`}
+                onClick={() => setShowAuthModal(true)}
+                className="flex items-center px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors duration-200"
               >
-                {tab.icon}
-                <span className="ml-2">{tab.label}</span>
+                <User className="w-4 h-4 mr-2" />
+                Sign In
               </button>
-            ))}
-          </nav>
+            )}
+          </div>
           
           {/* Mobile Navigation Button */}
           <div className="md:hidden">
@@ -86,10 +120,48 @@ const Header: React.FC = () => {
                 <span className="ml-2">{tab.label}</span>
               </button>
             ))}
+            
+            {/* Mobile Auth Section */}
+            <div className="border-t border-blue-700 pt-3 mt-3">
+              {user ? (
+                <div className="space-y-2">
+                  <div className="px-3 py-2 text-blue-100 text-sm">
+                    {user.email}
+                  </div>
+                  <button
+                    onClick={signOut}
+                    className="w-full flex items-center px-3 py-2 text-blue-100 hover:text-white hover:bg-blue-500 rounded-md"
+                  >
+                    <LogOut className="w-5 h-5 mr-2" />
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setShowAuthModal(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center px-3 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50"
+                >
+                  <User className="w-5 h-5 mr-2" />
+                  Sign In
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
     </header>
+    
+    <AuthModal
+      isOpen={showAuthModal}
+      onClose={() => setShowAuthModal(false)}
+      onAuthSuccess={() => {
+        setShowAuthModal(false);
+      }}
+    />
+    </>
   );
 };
 
