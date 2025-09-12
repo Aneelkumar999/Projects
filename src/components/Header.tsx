@@ -1,17 +1,12 @@
 import React from 'react';
-import { FileText, Briefcase, BarChart2, History, Menu, X, User, LogOut, Database } from 'lucide-react';
+import { FileText, Briefcase, BarChart2, History, Menu, X, Database } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { TabType } from '../types';
-import AuthModal from './AuthModal';
 
 const Header: React.FC = () => {
   const { 
     activeTab, 
-    setActiveTab, 
-    user, 
-    showAuthModal, 
-    setShowAuthModal, 
-    signOut 
+    setActiveTab
   } = useAppContext();
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -29,6 +24,7 @@ const Header: React.FC = () => {
     { id: 'match', label: 'Job Descriptions', icon: <Briefcase className="w-5 h-5" /> },
     { id: 'results', label: 'Analysis', icon: <BarChart2 className="w-5 h-5" /> },
     { id: 'history', label: 'History', icon: <History className="w-5 h-5" /> },
+    { id: 'data', label: 'Data', icon: <Database className="w-5 h-5" /> },
   ] as const;
 
   return (
@@ -61,29 +57,6 @@ const Header: React.FC = () => {
                 </button>
               ))}
             </nav>
-            
-            {/* Auth Section */}
-            {user ? (
-              <div className="flex items-center space-x-3">
-                <div className="text-blue-100 text-sm">
-                  {user.email}
-                </div>
-                <button
-                  onClick={signOut}
-                  className="flex items-center px-3 py-2 text-blue-100 hover:text-white hover:bg-blue-500 rounded-md transition-colors duration-200"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <button
-                onClick={() => setShowAuthModal(true)}
-                className="flex items-center px-4 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50 transition-colors duration-200"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Sign In
-              </button>
-            )}
           </div>
           
           {/* Mobile Navigation Button */}
@@ -120,47 +93,10 @@ const Header: React.FC = () => {
                 <span className="ml-2">{tab.label}</span>
               </button>
             ))}
-            
-            {/* Mobile Auth Section */}
-            <div className="border-t border-blue-700 pt-3 mt-3">
-              {user ? (
-                <div className="space-y-2">
-                  <div className="px-3 py-2 text-blue-100 text-sm">
-                    {user.email}
-                  </div>
-                  <button
-                    onClick={signOut}
-                    className="w-full flex items-center px-3 py-2 text-blue-100 hover:text-white hover:bg-blue-500 rounded-md"
-                  >
-                    <LogOut className="w-5 h-5 mr-2" />
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
-                <button
-                  onClick={() => {
-                    setShowAuthModal(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full flex items-center px-3 py-2 bg-white text-blue-600 rounded-md hover:bg-blue-50"
-                >
-                  <User className="w-5 h-5 mr-2" />
-                  Sign In
-                </button>
-              )}
-            </div>
           </div>
         </div>
       )}
     </header>
-    
-    <AuthModal
-      isOpen={showAuthModal}
-      onClose={() => setShowAuthModal(false)}
-      onAuthSuccess={() => {
-        setShowAuthModal(false);
-      }}
-    />
     </>
   );
 };

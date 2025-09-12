@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
-import { Database, Eye, EyeOff, Calendar, User, FileText, Briefcase } from 'lucide-react';
+import { Database, Eye, EyeOff, Calendar, FileText, Briefcase } from 'lucide-react';
 
 const DataViewer: React.FC = () => {
-  const { resumes, jobDescriptions, matchResults, user } = useAppContext();
+  const { resumes, jobDescriptions, matchResults } = useAppContext();
   const [activeDataTab, setActiveDataTab] = useState<'resumes' | 'jobs' | 'matches'>('resumes');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
 
@@ -25,20 +25,6 @@ const DataViewer: React.FC = () => {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
-  if (!user) {
-    return (
-      <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <div className="bg-blue-50 rounded-lg p-8 text-center">
-          <Database className="w-16 h-16 text-blue-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Data Viewer</h2>
-          <p className="text-gray-600 mb-6">
-            Sign in to view your stored data from the database.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
       <div className="mb-8">
@@ -47,7 +33,7 @@ const DataViewer: React.FC = () => {
           Data Viewer
         </h2>
         <p className="text-gray-600">
-          View all your stored data from the Supabase database.
+          View all your stored data (stored locally in browser).
         </p>
       </div>
 
@@ -328,14 +314,10 @@ const DataViewer: React.FC = () => {
       {/* Database Info */}
       <div className="bg-gray-50 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-          <User className="w-5 h-5 mr-2" />
-          Database Information
+          <Database className="w-5 h-5 mr-2" />
+          Local Storage Information
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-          <div>
-            <span className="font-medium text-gray-700">User:</span>
-            <div className="text-gray-600">{user.email}</div>
-          </div>
           <div>
             <span className="font-medium text-gray-700">Total Resumes:</span>
             <div className="text-gray-600">{resumes.length}</div>
