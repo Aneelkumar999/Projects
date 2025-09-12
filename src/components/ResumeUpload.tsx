@@ -21,9 +21,9 @@ const ResumeUpload: React.FC = () => {
   };
 
   const processFile = (file: File) => {
-    // Check file type - only allow text files, PDFs would need a parser library
-    if (file.type !== 'text/plain') {
-      setError('Only text files are supported at this time');
+    // Check file type - allow text files and PDFs
+    if (file.type !== 'text/plain' && file.type !== 'application/pdf') {
+      setError('Only text files (.txt) and PDF files (.pdf) are supported');
       return;
     }
 
@@ -36,29 +36,63 @@ const ResumeUpload: React.FC = () => {
     // Reset error state
     setError(null);
 
-    // Read the file content
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        const content = e.target.result as string;
-        
-        const newResume: Resume = {
-          id: crypto.randomUUID(),
-          name: file.name,
-          content,
-          file,
-          dateAdded: new Date(),
-        };
-        
-        addResume(newResume);
-      }
-    };
-    
-    reader.onerror = () => {
-      setError('Error reading file');
-    };
-    
-    reader.readAsText(file);
+    // Handle different file types
+    if (file.type === 'text/plain') {
+      // Read text file
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          const content = e.target.result as string;
+          
+          const newResume: Resume = {
+            id: crypto.randomUUID(),
+            name: file.name,
+            content,
+            file,
+            dateAdded: new Date(),
+          };
+          
+          addResume(newResume);
+        }
+      };
+      
+      reader.onerror = () => {
+        setError('Error reading text file');
+      };
+      
+      reader.readAsText(file);
+    } else if (file.type === 'application/pdf') {
+      // Read PDF file
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        if (e.target?.result) {
+          try {
+            // Dynamic import to avoid bundling issues
+            const pdfParse = await import('pdf-parse');
+            const arrayBuffer = e.target.result as ArrayBuffer;
+            const data = await pdfParse.default(arrayBuffer);
+            
+            const newResume: Resume = {
+              id: crypto.randomUUID(),
+              name: file.name,
+              content: data.text,
+              file,
+              dateAdded: new Date(),
+            };
+            
+            addResume(newResume);
+          } catch (error) {
+            setError('Error parsing PDF file. Please ensure it contains readable text.');
+          }
+        }
+      };
+      
+      reader.onerror = () => {
+        setError('Error reading PDF file');
+      };
+      
+      reader.readAsArrayBuffer(file);
+    }
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -129,7 +163,7 @@ const ResumeUpload: React.FC = () => {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".txt"
+          accept=".txt,.pdf"
           className="hidden"
           onChange={handleFileChange}
         />
@@ -141,7 +175,7 @@ const ResumeUpload: React.FC = () => {
         </h3>
         
         <p className="text-gray-500 mb-4">
-          or click to browse your files (TXT format only)
+          or click to browse your files (TXT and PDF formats supported)
         </p>
         
         <div className="flex flex-wrap justify-center gap-4">
